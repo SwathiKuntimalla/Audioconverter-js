@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video to Audio Converter</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="container">
+        <input type="file" id="videoInput" accept="video/*">
+        <button onclick="uploadVideo()">Extract Audio</button>
+        <div id="audioContainer"></div>
+    </div>
+  
+
+    <script>
+        function uploadVideo() {
+            var input = document.getElementById("videoInput");
+            var videoContainer = document.getElementById('audioContainer');
+            var file = input.files[0];
+            var videoURL = URL.createObjectURL(file);
+            videoContainer.innerHTML = '<audio width="60%" style="text-align: center;" id="uploadedaudio" controls><source src="' + videoURL + '" type="audio/mp3"></audio>';
+
+        }
+
+        function convertVideoToAudio(videoFile) {
+            var formData = new FormData();
+            formData.append('video', videoFile);
+
+            fetch('/convert', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Audio conversion successful:', data.audioURL);
+               
+                document.getElementById('uploadedaudio').src = data.audioURL;
+            })
+            .catch(error => {
+                console.error('Error converting video to audio:', error);
+            });
+        }
+    </script>
+</body>
+</html>
